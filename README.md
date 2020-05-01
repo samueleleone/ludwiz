@@ -12,7 +12,7 @@ Currently in beta state and probably there'll be some bugs. Tell me if you'll fi
 ### Requirements
 
 ```
-If you  want help with development of the code, make sure to install requirements in requirements.txt file
+Make sure to install requirements in requirements.txt file
 
 in some cases you need to do:
 pymysql.install_as_MySQLdb()
