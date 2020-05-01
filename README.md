@@ -2,6 +2,9 @@
 
 Dice roller, spellbook and weapon finder bot for Discord during D&D session written in py, with results in italian language.
 
+Thanks to clockers and Frusco to give me their database with spells D&D 5E and their Spellbook class, i have added weapons in db with two new procedures.
+Here link to their original project: https://github.com/FSBots/Spellbook
+
 ## Version 0.1
 
 Currently in beta state and probably there'll be some bugs. Tell me if you'll find someone.

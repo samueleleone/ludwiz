@@ -10,15 +10,15 @@ class obj:
 
 
 class Spellbook:
-    # Credenziali di accesso
+    # db credentials
     userName = None
     userPswd = None
     url = None
     dbName = None
     port = None
 
-    cn_object = None  # Oggetto connessione al database
-    cursor = None  # Cursore ottenuto da cn_object
+    cn_object = None  # db connection
+    cursor = None  # db cursor
 
     def __init__(self, new_userName, new_userPswd, new_url, new_dbName):
         self.url = new_url
@@ -117,14 +117,3 @@ class Spellbook:
             for nomeColonna, valore in tupla.items():
                 print(nomeColonna + " : " + str(valore))
 
-
-'''
-obj = Spellbook("standard","guruguru","localhost","dnd_5_incantesimi")
-obj.stampaRisultato(obj.ottieniIncantesimiDiLivello(2))
-obj.stampaRisultato(obj.ottieniIncantesimiPerNome("Ami"))
-print(obj.aggiungiUtente(123456))
-print(obj.aggiungiPreferiti(123456,"Amicizia"))
-print(obj.rimuoviPreferiti(123456,"Amicizia"))
-print(obj.aggiungiPreferiti(123456,"Amicizia"))
-obj.stampaRisultato(obj.ottieniPreferiti(123456))
-'''
