@@ -1,6 +1,8 @@
 # Ludwiz Bot
 
 Dice roller, spellbook and weapon finder bot for Discord during D&D session written in py, with results in italian language.
+Thanks to clockers and Frusco to give me his database with spell, i have added to his sql weapons db with two new procedures.
+Here link to their original project: https://github.com/FSBots/Spellbook
 
 ## Version 0.1
 
