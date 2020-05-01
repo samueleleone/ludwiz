@@ -88,16 +88,10 @@ async def vediarmi(ctx,*args):
         dnd_manual = Spellbook("db_username", "db_password", "db_host", "db_name")
         category = utilites.PasteStringSpace(args)
         category = category.lower()
-        countFieldsMax = dnd_manual.countWeapons(category)
         bookContent = dnd_manual.getWeapons_by_category(category)
-        nEmbed=1
         embed = discord.Embed(title=category.capitalize(), color=0x66ff66)
         embed_second = discord.Embed(title=category.capitalize(), color=0x66ff66)
         embed_third = discord.Embed(title=category.capitalize(), color=0x66ff66)
-        limiter = countFieldsMax
-        while(limiter>25):
-            limiter = limiter / 2
-            nEmbed = nEmbed + 1
         i=0
         flag=0
         for tupla in bookContent:
