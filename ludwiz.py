@@ -46,7 +46,7 @@ async  def incantesimi(ctx,dnd_class: str,level: int):
         await ctx.send(embed=embed)
         if (flag == 1):
             await ctx.send(embed=embed2)
-        dnd_manual.__del__()  # closing database connection
+       
 
     else:
         if(level<10):
@@ -83,10 +83,10 @@ async def arma(ctx, *args):
                             embed.title=value
                         embed = embed.add_field(name=column, value=value, inline=True)
                     await ctx.send(embed=embed)
-                    dnd_manual.__del__()  # closing database connection
+                    
             else:
                 await ctx.send("```Non trovo l'arma ["+weapon.capitalize()+"]```")
-                dnd_manual.__del__()  # closing database connection
+                
 
 # get weapons by category command - it gets a list with weapon available in input category
 @bot.command()
@@ -128,10 +128,10 @@ async def vediarmi(ctx,*args):
             if(flag==2):
                 await ctx.send(embed=embed_second)
                 await ctx.send(embed=embed_third)
-            dnd_manual.__del__() #closing database connection
+            
         else:
             await ctx.send("```Non trovo le armi di categoria [" + category.capitalize() + "]```")
-            dnd_manual.__del__()  # closing database connection
+           
 # ready-bot command
 @bot.event
 async def on_ready():
@@ -150,7 +150,7 @@ async def incanto(ctx,spell: str):
                 embed.title = value
             embed = embed.add_field(name=column, value=value, inline=True)
         await ctx.send(embed=embed)
-        dnd_manual.__del__()  # closing database connection
+        
 
 # Help commands
 @bot.command()
