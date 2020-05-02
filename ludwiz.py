@@ -6,6 +6,7 @@ from discord.ext import commands
 import asyncio
 import utilites
 from spellbook import Spellbook
+from weaponsbook import WeaponsBook
 import pymysql
 from auth import *
 
@@ -27,7 +28,7 @@ async  def incantesimi(ctx,dnd_class: str,level: int):
         level = str(level)
         #embed limit is up to 25 fields, so i need a flag to create a new embed after 25 spells found
         flag=0
-        manual_dnd = Spellbook("db_username", "db_password", "db_host", "db_name")
+        manual_dnd = Spellbook("spellbook_user", "CastingFireBall", "localhost", "dnd_5_spells")
         spells_found = manual_dnd.countSpells(dnd_class_lower, level)
         i=0
         spells = manual_dnd.get_spells_by_class_level(dnd_class_lower,level)
@@ -45,6 +46,7 @@ async  def incantesimi(ctx,dnd_class: str,level: int):
         await ctx.send(embed=embed)
         if (flag == 1):
             await ctx.send(embed=embed2)
+        dnd_manual.__del__()  # closing database connection
 
     else:
         if(level<10):
@@ -69,57 +71,67 @@ async def generapg(ctx, *args):
 # get single weapon with details command
 @bot.command()
 async def arma(ctx, *args):
-        dnd_manual = Spellbook("db_username", "db_password", "db_host", "db_name")
-        weapon = utilites.PasteStringSpace(args)
-        weapon = weapon.lower()
-        content_onBook = dnd_manual.getWeapons(weapon)
-        for tupla in content_onBook:
-            embed = discord.Embed(title=weapon.capitalize(), color=0x66ff66)
-            for column, value in tupla.items():
-                if(column=="Nome"):
-                    embed.title=value
-                embed = embed.add_field(name=column, value=value, inline=True)
-            await ctx.send(embed=embed)
+            dnd_manual = WeaponsBook("weapons_user", "GetAllWeapons", "localhost", "dnd_5_weapons")
+            weapon = utilites.PasteStringSpace(args)
+            weapon = weapon.lower()
+            content_onBook = dnd_manual.getWeapons(weapon)
+            if(content_onBook):
+                for tupla in content_onBook:
+                    embed = discord.Embed(title=weapon.capitalize(), color=0x66ff66)
+                    for column, value in tupla.items():
+                        if(column=="Nome"):
+                            embed.title=value
+                        embed = embed.add_field(name=column, value=value, inline=True)
+                    await ctx.send(embed=embed)
+                    dnd_manual.__del__()  # closing database connection
+            else:
+                await ctx.send("```Non trovo l'arma ["+weapon.capitalize()+"]```")
+                dnd_manual.__del__()  # closing database connection
 
 # get weapons by category command - it gets a list with weapon available in input category
 @bot.command()
 async def vediarmi(ctx,*args):
         #here there is a limiter and countFieldsMax to bypass embed limit on discord.py class that's up to 25 fields (i set up to 24)
-        dnd_manual = Spellbook("db_username", "db_password", "db_host", "db_name")
+        dnd_manual = WeaponsBook("weapons_user", "GetAllWeapons", "localhost", "dnd_5_weapons")
         category = utilites.PasteStringSpace(args)
         category = category.lower()
+        if('semplici' in category):
+            category='arma semplice'
         bookContent = dnd_manual.getWeapons_by_category(category)
-        embed = discord.Embed(title=category.capitalize(), color=0x66ff66)
-        embed_second = discord.Embed(title=category.capitalize(), color=0x66ff66)
-        embed_third = discord.Embed(title=category.capitalize(), color=0x66ff66)
-        i=0
-        flag=0
-        for tupla in bookContent:
-            for column,value in tupla.items():
-                if(column != "Categoria"):
-                    if(i<24):
-                        embed.add_field(name=column,value=value)
-                        i=i+1
-                    elif(i<48):
-                            flag=1
-                            embed_second.add_field(name=column, value=value)
-                            i = i + 1
-                    elif(i<96):
-                            flag=2
-                            embed_third.add_field(name=column,value=value)
+        if(bookContent):
+            embed = discord.Embed(title=category.capitalize(), color=0x66ff66)
+            embed_second = discord.Embed(title=category.capitalize(), color=0x66ff66)
+            embed_third = discord.Embed(title=category.capitalize(), color=0x66ff66)
+            i=0
+            flag=0
+            for tupla in bookContent:
+                for column,value in tupla.items():
+                    if(column != "Categoria"):
+                        if(i<24):
+                            embed.add_field(name=column,value=value)
                             i=i+1
-                else:
-                    embed.title=value
-                    embed_second.title=value
-                    embed_third.title=value
-        await ctx.send(embed=embed)
-        if(flag==1):
-            await ctx.send(embed=embed_second)
-        if(flag==2):
-            await ctx.send(embed=embed_second)
-            await ctx.send(embed=embed_third)
-
-
+                        elif(i<48):
+                                flag=1
+                                embed_second.add_field(name=column, value=value)
+                                i = i + 1
+                        elif(i<96):
+                                flag=2
+                                embed_third.add_field(name=column,value=value)
+                                i=i+1
+                    else:
+                        embed.title=value
+                        embed_second.title=value
+                        embed_third.title=value
+            await ctx.send(embed=embed)
+            if(flag==1):
+                await ctx.send(embed=embed_second)
+            if(flag==2):
+                await ctx.send(embed=embed_second)
+                await ctx.send(embed=embed_third)
+            dnd_manual.__del__() #closing database connection
+        else:
+            await ctx.send("```Non trovo le armi di categoria [" + category.capitalize() + "]```")
+            dnd_manual.__del__()  # closing database connection
 # ready-bot command
 @bot.event
 async def on_ready():
@@ -128,7 +140,7 @@ async def on_ready():
 # get single spell with details command
 @bot.command()
 async def incanto(ctx,spell: str):
-    dnd_manual = Spellbook("db_username", "db_password", "db_host", "db_name")
+    dnd_manual = Spellbook("spellbook_user", "CastingFireBall", "localhost", "dnd_5_spells")
     content_onBook = dnd_manual.get_spells_by_name(spell)
     #embed = discord.Embed(title=, color=0x66ff66)
     for tupla in content_onBook:
@@ -138,6 +150,7 @@ async def incanto(ctx,spell: str):
                 embed.title = value
             embed = embed.add_field(name=column, value=value, inline=True)
         await ctx.send(embed=embed)
+        dnd_manual.__del__()  # closing database connection
 
 # Help commands
 @bot.command()

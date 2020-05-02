@@ -2,14 +2,12 @@ import pymysql
 import discord
 pymysql.install_as_MySQLdb()
 import MySQLdb
-
-
 class obj:
     settimeout=0
     pass
 
 
-class Spellbook:
+class WeaponsBook:
     # db credentials
     userName = None
     userPswd = None
@@ -36,42 +34,44 @@ class Spellbook:
         self.cn_object.close()
         self.cursor.close()
 
-    def get_spells_by_class_level(self, classe, lvl):
-        query = ("CALL getSpellsByClassLevel('" + classe + "','" + str(lvl) + "');")
+    def countWeapons(self, category):
+        query = ("CALL getWeaponsByCategory('" + category + "');")
         self.cursor.execute(query)
-        contentList = []
-        aux = {}
+        i = 0
         for row in self.cursor:
-            aux["Nome"] = row[0]
-            contentList.append(aux)
-            aux = {}
-        return contentList
+            i = i + 1 + 2
+        return i
 
-
-    def get_spells_by_name(self, nome):
-        query = ("CALL getSpellsByName('" + nome + "');")
+    def getWeapons(self, weaponName):
+        query = ("CALL getWeaponsByName('"+weaponName+"');")
         self.cursor.execute(query)
         contentList = []
         aux = {}
         for row in self.cursor:
             aux["Nome"] = row[0]
             aux["Tipo"] = row[1]
-            aux["TempoDiLancio"] = row[3]
-            aux["Componenti"] = row[4]
-            aux["Durata"] = row[5]
-            aux["Gittata"] = row[6]
-            aux["Descrizione"] = row[7]
+            aux["Stile di combattimento"] = row[2]
+            aux["Costo"] = row[3]
+            aux["Danni"] = row[4]
+            aux["Proprietà"] = row[5]
             contentList.append(aux)
             aux = {}
         return contentList
 
-    def countSpells(self, dnd_class,level):
-        query = ("CALL getSpellsByClassLevel('" + dnd_class + "','" + str(level) + "');")
+    def getWeapons_by_category(self, weaponCategory):
+        query = ("CALL getWeaponsByCategory('" + weaponCategory + "');")
         self.cursor.execute(query)
-        i=0
+        contentList = []
+        aux = {}
         for row in self.cursor:
-           i=i+1
-        return i
+            aux["Categoria"] = row[0]
+            aux["Nome"] = row[1]
+            aux["Danni"] = row[2]
+            aux["Stile di combattimento"] = row[3]
+
+            contentList.append(aux)
+            aux = {}
+        return contentList
 
     def stampaRisultato(self, content):
         for tupla in content:
