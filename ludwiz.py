@@ -28,7 +28,7 @@ async  def incantesimi(ctx,dnd_class: str,level: int):
         level = str(level)
         #embed limit is up to 25 fields, so i need a flag to create a new embed after 25 spells found
         flag=0
-        manual_dnd = Spellbook("spellbook_user", "CastingFireBall", "localhost", "dnd_5_spells")
+        manual_dnd = Spellbook("db_user", "db_password", "db_host", "db_name")
         spells_found = manual_dnd.countSpells(dnd_class_lower, level)
         i=0
         spells = manual_dnd.get_spells_by_class_level(dnd_class_lower,level)
@@ -71,7 +71,7 @@ async def generapg(ctx, *args):
 # get single weapon with details command
 @bot.command()
 async def arma(ctx, *args):
-            dnd_manual = WeaponsBook("weapons_user", "GetAllWeapons", "localhost", "dnd_5_weapons")
+            dnd_manual = WeaponsBook("db_user", "db_password", "db_host", "db_name")
             weapon = utilites.PasteStringSpace(args)
             weapon = weapon.lower()
             content_onBook = dnd_manual.getWeapons(weapon)
@@ -92,7 +92,7 @@ async def arma(ctx, *args):
 @bot.command()
 async def vediarmi(ctx,*args):
         #here there is a limiter and countFieldsMax to bypass embed limit on discord.py class that's up to 25 fields (i set up to 24)
-        dnd_manual = WeaponsBook("weapons_user", "GetAllWeapons", "localhost", "dnd_5_weapons")
+        dnd_manual = WeaponsBook("db_user", "db_password", "db_host", "db_name")
         category = utilites.PasteStringSpace(args)
         category = category.lower()
         if('semplici' in category):
@@ -140,7 +140,7 @@ async def on_ready():
 # get single spell with details command
 @bot.command()
 async def incanto(ctx,spell: str):
-    dnd_manual = Spellbook("spellbook_user", "CastingFireBall", "localhost", "dnd_5_spells")
+    dnd_manual = Spellbook("db_user", "db_password", "db_host", "db_name")
     content_onBook = dnd_manual.get_spells_by_name(spell)
     #embed = discord.Embed(title=, color=0x66ff66)
     for tupla in content_onBook:
