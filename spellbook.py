@@ -34,7 +34,7 @@ class Spellbook:
 
     def __del__(self):
         self.cn_object.close()
-        self.cursor.close()
+        
 
     def get_spells_by_class_level(self, classe, lvl):
         query = ("CALL getSpellsByClassLevel('" + classe + "','" + str(lvl) + "');")
