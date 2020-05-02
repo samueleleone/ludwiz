@@ -32,7 +32,7 @@ class WeaponsBook:
 
     def __del__(self):
         self.cn_object.close()
-        self.cursor.close()
+        
 
     def countWeapons(self, category):
         query = ("CALL getWeaponsByCategory('" + category + "');")
