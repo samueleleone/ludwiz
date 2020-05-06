@@ -31,7 +31,7 @@ async  def incantesimi(ctx,dnd_class: str,level: int):
         level = str(level)
         #embed limit is up to 25 fields, so i need a flag to create a new embed after 25 spells found
         flag=0
-        manual_dnd = Spellbook("spellbook_user", "CastingFireBall", "192.168.1.74", "dnd_5_spells")
+        manual_dnd = Spellbook("db_user", "db_psw", "db_host", "db_name")
         spells_found = manual_dnd.countSpells(dnd_class_lower, level)
         i=0
         spells = manual_dnd.get_spells_by_class_level(dnd_class_lower,level)
@@ -146,7 +146,7 @@ async def incanto(ctx, *args):
     MAX_SIZE = 1024
     spell = utilites.PasteStringSpace(args)
     print(spell)
-    dnd_manual = Spellbook("spellbook_user", "CastingFireBall", "localhost", "dnd_5_spells")
+    dnd_manual = Spellbook("db_user", "db_psw", "db_host", "db_name")
     content_onBook = dnd_manual.get_spells_by_name(spell)
     embed = discord.Embed(title=spell.capitalize(),color=0x66ff66)
     conts = []
