@@ -162,12 +162,12 @@ async def incanto(ctx, *args):
                 current_split = []
                 current_length = 0
                 for word in value.split(" "):
-                    if current_length + len(word) >= MAX_SIZE:
+                    if current_length + len(word) + 1 >= MAX_SIZE:
                         splits.append(" ".join(current_split))
                         current_split = []
                         current_length = 0
                     current_split.append(word)
-                    current_length += len(word)
+                    current_length += len(word) + 1
                 embed.add_field(name=column,value=splits[0], inline=True)
                 splits = splits[1:]
                 for split in splits:
