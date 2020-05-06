@@ -8,7 +8,7 @@ def rolling(HighFace):
 def PasteString(args):
     converted = ""
     for arg in args:
-        converted = converted + arg
+        converted = converted + str(arg)
     return converted
 # convert *args in a single string adding a space between input words
 def PasteStringSpace(args):

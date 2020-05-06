@@ -1,6 +1,4 @@
-import os,re
 import discord
-import random
 from discord.ext.commands import Bot
 from discord.ext import commands
 import asyncio
@@ -9,6 +7,11 @@ from spellbook import Spellbook
 from weaponsbook import WeaponsBook
 import pymysql
 from auth import *
+import helpmenu
+import utilites
+import random
+import os
+import re
 
 token = token
 # bot initalization
@@ -28,7 +31,7 @@ async  def incantesimi(ctx,dnd_class: str,level: int):
         level = str(level)
         #embed limit is up to 25 fields, so i need a flag to create a new embed after 25 spells found
         flag=0
-        manual_dnd = Spellbook("db_user", "db_password", "db_host", "db_name")
+        manual_dnd = Spellbook("spellbook_user", "CastingFireBall", "192.168.1.74", "dnd_5_spells")
         spells_found = manual_dnd.countSpells(dnd_class_lower, level)
         i=0
         spells = manual_dnd.get_spells_by_class_level(dnd_class_lower,level)
@@ -139,77 +142,57 @@ async def on_ready():
 
 # get single spell with details command
 @bot.command()
-async def incanto(ctx,spell: str):
-    dnd_manual = Spellbook("db_user", "db_password", "db_host", "db_name")
+async def incanto(ctx, *args):
+    MAX_SIZE = 1024
+    spell = utilites.PasteStringSpace(args)
+    print(spell)
+    dnd_manual = Spellbook("spellbook_user", "CastingFireBall", "localhost", "dnd_5_spells")
     content_onBook = dnd_manual.get_spells_by_name(spell)
-    #embed = discord.Embed(title=, color=0x66ff66)
-    for tupla in content_onBook:
-        embed = discord.Embed(title=spell.capitalize(), color=0x66ff66)
-        for column, value in tupla.items():
+    embed = discord.Embed(title=spell.capitalize(),color=0x66ff66)
+    conts = []
+    if (len(content_onBook)==1):
+        embed = discord.Embed(title=spell.capitalize(),color=0x66ff66)
+        tupla = content_onBook[0]
+        for column,value in tupla.items():
             if (column == 'Nome'):
+                spellName = value
                 embed.title = value
-            embed = embed.add_field(name=column, value=value, inline=True)
-        await ctx.send(embed=embed)
-        
+            else:
+                if(column == 'Descrizione'):
+                    splits = [value[i:i+MAX_SIZE] for i in range(0,len(value),MAX_SIZE)]
+                    embed.add_field(name=column,value=splits[0],inline=True)
+                    splits = splits [1:]
+                    for split in splits:
+                        em = discord.Embed(title=spellName + " - Continua",color=0x66ff66)
+                        conts.append(em.add_field(name="Descrizione",value=split,inline=True))
+                else:
+                    embed = embed.add_field(name=column,value=value,inline=True)
+    else:
+        spellToFind = spell
+        for spell in content_onBook:
+            if("Nome" in spell):
+                embed.description="La parola "+str(spellToFind)+' ha dato molti risultati, specifica meglio tra i seguenti: '
+                embed = embed.add_field(name="Nome",value=spell["Nome"],inline=True)
+
+    await ctx.send(embed=embed)
+    if len(conts) > 0 :
+        for em in conts:
+            await ctx.send(embed=em)
+
 
 # Help commands
 @bot.command()
 async def aiuto(ctx, *args):
-        await ctx.send("```"
-                       "Ciao sono Ludwiz, Un taverniere che ti aiuta giocando a D&D.\n"
-                       "Ti elenco le possibilità dei comandi generali\n\n"
-                       "commands per il lancio dei dadi:\n"
-                       "> Lanciare i dadi - !lancia [opzioni] (opzioni con !aiutodadi) \n\n"
-                       "commands per gli incantesimi:\n"
-                       "> Trovare un incantesimo - !incanto [opzioni] \n"
-                       "> Consultare gli incantesimi - !incantesimi [opzioni]\n"
-                       "(Per ulteriori dettagli sulle opzioni usa !aiutoincantesimi)\n\n"
-                       "commands per consultare armi:\n"
-                       "> Trovare arma con il nome - !arma [opzioni] \n"
-                       "> Consultare armi dalla categoria - !vediarmi [opzioni]\n"
-                       "(Per ulteriori dettagli sulle opzioni usa !aiutoarmi)\n\n"
-                       "Altri commands:\n"
-                       "> Generare 3 opzioni di classe/razza casualmente - !generapg\n"
-                       "```")
+        await ctx.send(helpmenu.helpGeneral())
 @bot.command()
 async  def aiutodadi(ctx):
-    await ctx.send("```"
-                   "Salve viandante, sei pronto a giocare con i tuoi dadi?\n"
-                   "Ti do qualche suggerimento, sono esperto nel gioco dei dadi\n\n"
-                   "commands:\n"
-                   "> Lancia 1 Dado qualsiasi - !lancia d[valore]\n"
-                   "esempio: !lancia d20 - tirerà un dado 20 facce\n\n"
-                   "> Lancia n Dadi qualsiasi - !lancia [num]d[valore]\n"
-                   "esempio: !lancia 2d20 - tirerà due dadi 20 facce\n\n"
-                   "> Lancia 1 Dado qualsiasi con modificatore - !lancia d[valore] + [modificatore]\n"
-                   "esempio: !lancia d20 + 3 - tirerà un dado 20 facce con modificatore 3\n\n"
-                   "> Lancia n Dadi qualsiasi con modificatore - !lancia [num]d[valore] + [modificatore]\n"
-                   "esempio: !lancia 3d8 + 4 - tirerà tre dadi 8 facce con modificatore 4\n\n"
-                   "```")
+    await ctx.send(helpmenu.helpDices())
 @bot.command()
 async  def aiutoincantesimi(ctx):
-    await ctx.send("```"
-                   "Mio caro avventuriero, ricorda che è vietato incantare in taverna!\n"
-                   "Vediamo se riesco però a consultare questo vecchio tomo per te ed aiutarti..\n\n"
-                   "commands:\n"
-                   '> Cercare tutti gli incantesimi corrispondenti a parola chiave\n'
-                   'esempio: !incanto Palla - trova incanti con "Palla" \n\n'
-                   '> Cercare un incantesimo con nome specifico usando le quotes\n'
-                   'esempio: !incanto "Palla di Fuoco" - trova incantesimo specifico\n\n'
-                   '> Cercare tutti gli incantesimi data una Classe e il Livello\n'
-                   'esempio: !incantesimi Bardo 2 - trova incanti del bardo di liv.2\n\n'                   
-                   "```")
+    await ctx.send(helpmenu.helpSpells())
 @bot.command()
 async  def aiutoarmi(ctx):
-    await ctx.send("```"
-                   "Benvenuto nell'angolo della taverna dedicato alle armi!\n"
-                   "Cosa vuoi vedere di preciso?\n\n"
-                   "commands:\n"
-                   '> Cercare tutte le armi semplici o da guerra:\n'
-                   'esempio: !vediarmi da guerra o !vediarmi semplici\n\n'
-                   '> Cercare un arma con nome specifico\n'
-                   'esempio: !arma Alabarda - trova arma specifica\n\n'              
-                   "```")
+    await ctx.send(helpmenu.helpWeapons())
 
 # dice-rolling command
 @bot.command()
