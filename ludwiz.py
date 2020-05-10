@@ -2,7 +2,6 @@ import discord
 from discord.ext.commands import Bot
 from discord.ext import commands
 import asyncio
-import utilites
 from spellbook import Spellbook
 from weaponsbook import WeaponsBook
 import pymysql
@@ -11,7 +10,6 @@ import helpmenu
 import utilites
 import random
 import os
-import re
 
 token = token
 # bot initalization
@@ -204,152 +202,9 @@ async  def aiutoarmi(ctx):
 
 # dice-rolling command
 @bot.command()
-async def lancia(ctx,*args):
-        arg = args
-        regex = re.compile('^(\d{0,4}d\d{1,3})((\s*\+\s*)(\d*))?\s*$')
-        vault = 0
-        stop = 0
-        atLeastOneTime = 0
-        minus = str(arg).find('-')
-        division = str(arg).find('/')
-        multiplicate = str(arg).find('*')
-        converted = utilites.PasteString(arg)
-        risultato = regex.match(converted)
-        if risultato != None:
-            if( minus == -1 and division == -1 and multiplicate == -1):
-                for arg in args:
-                    argstring = str(arg)
-                    found = argstring.find('d')
-                    foundSign = argstring.find('+')
-                    if (found != -1):
-                        atLeastOneTime = 1
-                        diceToRoll = argstring.split('d')
-                        quantity = diceToRoll.__getitem__(0)
-                        valueOfDice = diceToRoll.__getitem__(1)
-                        print(' Devo lanciare il dado '+valueOfDice)
-                        print(' Devo lanciarlo per n: '+quantity)
-                        if('+' in valueOfDice):
-                            await ctx.send("```Hai dimenticato lo spazio? devi scrivere !lancia d[valore] + [modificatore] ```")
-                            break
-                        if(int(valueOfDice)>200):
-                            stop = 1
-                            await ctx.send("```Mi spiace ma non abbiamo un dado con "+str(valueOfDice)+"```")
-
-                        if(stop == 1):
-                            break
-                        if(quantity != ''):
-                            if (quantity != '-'):
-                                if int(quantity)>9:
-                                    await ctx.send("```Mi spiace, non puoi lanciare " + str(quantity) + " dadi```")
-                                    stop = 1
-                                for i in range(int(quantity)):
-                                    if(stop == 0):
-                                        num = utilites.rolling(int(valueOfDice))
-                                        vault = num+vault
-                                        vault = utilites.store(vault)
-                                        await ctx.send("```Il lancio del tuo dado d"+str(valueOfDice)+" è : [" + str(num) + "]```")
-
-                        else:
-                            num = utilites.rolling(int(valueOfDice))
-                            vault= utilites.store(num)
-                            await ctx.send("```Il lancio del tuo dado d"+str(valueOfDice)+" è : [" + str(num) + "]```")
-
-                    if (foundSign == -1 and found == -1):
-                        if (atLeastOneTime == 0):
-                            await ctx.send("```Sintassi errata! - devi scrivere !lancia [numero]d[valore dado] + [modificatore]```")
-                        vault = utilites.store(vault)
-                        Modifier = argstring
-                        TotalDiceRollWithModifier = int(Modifier)+vault
-                        await ctx.send("```Il lancio dei tuoi dadi è di " + str(vault) + " con modificatore [" + str(Modifier) + "]"+" = "+ str(TotalDiceRollWithModifier)+"```")
-                    else:
-                        Modifier = arg.split(',')
-                        succ = Modifier.__getitem__(0)
-                        wrong=1
-                        error_flag=0
-                        if(succ == '+'):
-                            succ = Modifier.__getitem__(0)
-                            print("succ "+succ)
-                        else:
-                            wrong = wrong + 1
-                            if(wrong>1):
-                                error_flag=1
-                        print(error_flag)
-                        if(error_flag==1 and foundSign != -1):
-                            await ctx.send("```Non hai messo lo spazio, devi scrivere !lancia d"+str(valueOfDice)+" + [Modificatore] con lo spazio```")
-                            break
-
-        else:
-            if(minus != -1):
-                for arg in args:
-                    argstring = str(arg)
-                    found = argstring.find('d')
-                    foundSign = argstring.find('-')
-                    if (found != -1):
-                        atLeastOneTime = 1
-                        diceToRoll = argstring.split('d')
-                        quantity = diceToRoll.__getitem__(0)
-                        valueOfDice = diceToRoll.__getitem__(1)
-                        print(' Devo lanciare il dado '+valueOfDice)
-                        print(' Devo lanciarlo per n: '+quantity)
-                        if(int(valueOfDice)>200):
-                            stop = 1
-                            await ctx.send("```Mi spiace ma non abbiamo un dado con "+str(valueOfDice)+"```")
-
-                        if(stop == 1):
-                            break
-                        if(quantity != ''):
-                            if (quantity != '-'):
-                                if int(quantity)>9:
-                                    await ctx.send("```Mi spiace, non puoi lanciare " + str(quantity) + " dadi```")
-                                    stop = 1
-                                for i in range(int(quantity)):
-                                    if(stop == 0):
-                                        num = utilites.rolling(int(valueOfDice))
-                                        vault = num+vault
-                                        vault = utilites.store(vault)
-                                        await ctx.send("```Il lancio del tuo dado d"+str(valueOfDice)+" è : [" + str(num) + "]```")
-
-                        else:
-                            num = utilites.rolling(int(valueOfDice))
-                            vault= utilites.store(num)
-                            await ctx.send("```Il lancio del tuo dado d"+str(valueOfDice)+" è : [" + str(num) + "]```")
-
-                    if (foundSign == -1 and found == -1):
-                        if (atLeastOneTime == 0):
-                            await ctx.send("```Sintassi errata! - devi scrivere !lancia [numero]d[valore dado] + [modificatore]```")
-                        vault = utilites.store(vault)
-                        Modifier = argstring
-                        TotalDiceRollWithModifier = vault - int(Modifier)
-                        await ctx.send("```Il lancio dei tuoi dadi è di " + str(vault) + " con modificatore [-" + str(Modifier) + "]"+" = "+ str(TotalDiceRollWithModifier)+"```")
-                    else:
-                        Modifier = arg.split(',')
-                        succ = Modifier.__getitem__(0)
-                        wrong=1
-                        error_flag=0
-                        if(succ == '-'):
-                            succ = Modifier.__getitem__(0)
-                            print("succ "+succ)
-                        else:
-                            wrong = wrong + 1
-                            if(wrong>1):
-                                error_flag=1
-                        print(error_flag)
-                        if(error_flag==1 and foundSign != -1):
-                            await ctx.send("```Non hai messo lo spazio, devi scrivere !lancia d"+str(valueOfDice)+" + [Modificatore] con lo spazio```")
-                            break
-
-
-            else:
-                 await ctx.send("```Hai sbagliato qualcosa?\n"
-                               "Ti ricordo che NON puoi fare le seguenti cose:\n"
-                               "> Lanciare dadi sopra le 200 facce.\n"
-                               "> Lanciare contemporaneamente piu' di 9 dadi per volta.\n"
-                               "> Usare moltiplicazione o divisione per i tuoi modificatori.\n"
-                               "> Non mettere lo spazio tra dado e modificatore, il lancio del dado sarà eseguito lo stesso ma senza modificatore.\n"   
-                               "> Utilizzare piu' di un modificatore, è consentito !lancia 2d20 + 3, ma non !lancia 2d20 + 3 + 4.\n\n"
-                               "> Esempio corretto di sintassi per il lancio dei dadi: !lancia d20 + 1 - !lancia 2d20 + 3 - !lancia d8 - !lancia 3d8 + 4"
-                               "```")
-
+async  def lancia(ctx,*args):
+    roll = dice.rolling(args)
+    await ctx.send(roll)
 
 #cleaning chat-text channel with this command - keep attention using this
 @bot.command()
