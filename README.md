@@ -1,10 +1,8 @@
 # Ludwiz Bot
 
 Dice roller, spellbook and weapon finder bot for Discord during D&D session written in py, with results in italian language.
-
-Thanks to clockers and Frusco to give me their database with spells D&D 5E and their Spellbook class, i have added weapons in db with two new procedures.
-Here link to their original project: https://github.com/FSBots/Spellbook
-
+(Database uses official SRD from 5e published on https://dnd.wizards.com translated by https://www.editorifolli.it)
+[Here SRD's PDF translated in Italian](http://www.editorifolli.it/f/dnd5/srd5/srd05_11_incantesimi.pdf) 
 ## Version 0.1
 
 Currently in beta state and probably there'll be some bugs. Tell me if you'll find someone.
@@ -35,7 +33,7 @@ Rolling dice commands:
 
 # Rolling dice with modifier
 -!lancia <dice> + <modifier> - example: !lancia d20 + 4 for d20 roll with +4 modifier.
--!lancia <dice> - <modifier> - exmaple: !lancia d20 - 4 for d20 roll with -4 modifier.
+
 
 
 
@@ -46,7 +44,7 @@ Rolling dice commands:
 # roll <x> d20 dices with modifiers
 
 -!lancia <x>d20 + <modifier> - example: !lancia 2d20 + 4 for <x> d20 roll with +4 modifier.
--!lancia <x>d20 - <modifier> - example: !lancia 2d20 - 4 for <x> d20 roll with -4 modifier.
+
 ```
 
 
