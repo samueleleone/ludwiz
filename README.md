@@ -2,7 +2,7 @@
 
 Dice roller, spellbook and weapon finder bot for Discord during D&D session written in py, with results in italian language.
 (Database uses official SRD from 5e published on https://dnd.wizards.com translated by https://www.editorifolli.it)
-[Here SRD's PDF translated in Italian](http://www.editorifolli.it/f/dnd5/srd5/srd05_11_incantesimi.pdf) 
+[Here PDF used](http://www.editorifolli.it/f/dnd5/srd5/srd05_11_incantesimi.pdf) 
 ## Version 0.1
 
 Currently in beta state and probably there'll be some bugs. Tell me if you'll find someone.
