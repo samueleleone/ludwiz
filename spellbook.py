@@ -78,3 +78,7 @@ class Spellbook:
             for nomeColonna, valore in tupla.items():
                 print(nomeColonna + " : " + str(valore))
 
+
+
+
+
