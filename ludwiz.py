@@ -144,7 +144,7 @@ async def incanto(ctx, *args):
     MAX_SIZE = 1024
     spell = utilites.PasteStringSpace(args)
     print(spell)
-    dnd_manual = Spellbook("db_user", "db_psw", "db_host", "db_name")
+    dnd_manual = Spellbook("spellbook_user", "CastingFireBall", "localhost", "dnd_5_spells")
     content_onBook = dnd_manual.get_spells_by_name(spell)
     embed = discord.Embed(title=spell.capitalize(),color=0x66ff66)
     conts = []
@@ -155,24 +155,16 @@ async def incanto(ctx, *args):
             if (column == 'Nome'):
                 spellName = value
                 embed.title = value
-            elif column == "Descrizione":
-                splits = []
-                current_split = []
-                current_length = 0
-                for word in value.split(" "):
-                    if current_length + len(word) + 1 >= MAX_SIZE:
-                        splits.append(" ".join(current_split))
-                        current_split = []
-                        current_length = 0
-                    current_split.append(word)
-                    current_length += len(word) + 1
-                embed.add_field(name=column,value=splits[0], inline=True)
-                splits = splits[1:]
-                for split in splits:
-                    em = discord.Embed(title=tupla["Nome"] + " - Continua", color=0x66ff66)
-                    conts.append(em.add_field(name="Descrizione", value=split, inline=True))
             else:
-                embed = embed.add_field(name=column, value=value, inline=True)
+                if(column == 'Descrizione'):
+                    splits = [value[i:i+MAX_SIZE] for i in range(0,len(value),MAX_SIZE)]
+                    embed.add_field(name=column,value=splits[0],inline=True)
+                    splits = splits [1:]
+                    for split in splits:
+                        em = discord.Embed(title=spellName + " - Continua",color=0x66ff66)
+                        conts.append(em.add_field(name="Descrizione",value=split,inline=True))
+                else:
+                    embed = embed.add_field(name=column,value=value,inline=True)
     else:
         spellToFind = spell
         for spell in content_onBook:
