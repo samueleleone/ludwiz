@@ -1,4 +1,4 @@
-token = "YOUR TOKEN FOR DISCORD BOT"
+token = 'YOUR TOKEN FOR DISCORD BOT'
 
 db_host = 'YOUR DATABASE HOST'
 #spells credentials
