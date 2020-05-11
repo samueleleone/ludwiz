@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 4.6.6deb5
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Creato il: Mag 02, 2020 alle 14:07
--- Versione del server: 10.4.12-MariaDB
--- Versione PHP: 7.4.5
+-- Host: localhost:3306
+-- Creato il: Mag 11, 2020 alle 23:41
+-- Versione del server: 10.3.22-MariaDB-0+deb10u1
+-- Versione PHP: 7.3.14-1~deb10u1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -106,7 +105,6 @@ INSERT INTO `weapons` (`Name`, `Category`, `Combat`, `Cost`, `Damages`, `Propert
 ALTER TABLE `weapons`
   ADD PRIMARY KEY (`Name`),
   ADD UNIQUE KEY `Nome` (`Name`);
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
