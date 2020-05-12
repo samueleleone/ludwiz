@@ -9,13 +9,22 @@ classes = ['barbaro', 'bardo', 'chierico', 'druido', 'guerriero', 'ladro', 'mago
 async def send_spell_details(ctx, spells, spell_name):
     embeds = []
     if len(spells) == 0:
-        await ctx.send("```Sei sicuro? Non riesco a trovare nessun incantesimo specificato```")
+        await ctx.send("Sei sicuro? Non riesco a trovare nessun incantesimo specificato")
     elif len(spells) == 1:
         embeds.append(get_spell_embed(spells[0]))
     else:
-        embeds = get_names_embed(spells, spell_name)
+        for i in range(len(spells)):
+            spell = spells[i]
+            if spell["Nome"].lower() == spell_name.lower():
+                embeds.append(get_spell_embed(spell))
+                del spells[i]
+                break
+        other_spells = get_names_embed(spells,spell_name)
+        other_spells[0].title="Altri risultati correlati:"
+        embeds = embeds + other_spells
     for em in embeds:
         await ctx.send(embed=em)
+
 
 
 # get the names of the spells in one embed
