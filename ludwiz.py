@@ -17,6 +17,8 @@ dnd_manual_weapons = WeaponsBook(db_user_weapons, db_psw_weapons, db_host, db_na
 bot.remove_command('help')
 
 
+
+
 # get spells by class command - it gets a list with names of spells available
 @bot.command()
 async def incantesimi(ctx, dnd_class: str, level: int):

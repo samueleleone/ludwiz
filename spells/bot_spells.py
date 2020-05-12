@@ -2,25 +2,29 @@ import discord
 
 MAX_SIZE = 1024
 SPELL_EMBED_COLOR = 0x66ff66
-
+MAX_FIELDS_SIZE = 25
+classes = ['barbaro', 'bardo', 'chierico', 'druido', 'guerriero', 'ladro', 'mago', 'monaco', 'paladino', 'stregone', 'ranger' , 'warlock']
 
 # !incanto command
 async def send_spell_details(ctx, spells, spell_name):
-    if len(spells) == 1:
-        embed = get_spell_embed(spells[0])
+    embeds = []
+    if len(spells) == 0:
+        await ctx.send("```Sei sicuro? Non riesco a trovare nessun incantesimo specificato```")
+    elif len(spells) == 1:
+        embeds.append(get_spell_embed(spells[0]))
     else:
-        embed = get_names_embed(spells, spell_name)
-    await ctx.send(embed=embed)
+        embeds = get_names_embed(spells, spell_name)
+    for em in embeds:
+        await ctx.send(embed=em)
 
 
 # get the names of the spells in one embed
 def get_names_embed(spells, spell_name):
-    embed = discord.Embed(title=spell_name.capitalize(), color=SPELL_EMBED_COLOR)
-    embed.description = "'" + str(spell_name) + \
+    description = "'" + str(spell_name) + \
                         "' ha dato molti risultati, specifica meglio tra i seguenti: "
-    for spell in spells:
-        embed = embed.add_field(name="Nome", value=spell["Nome"], inline=True)
-    return embed
+    spells_filtered = [spell for spell in spells if spell["Nome"].startswith(spell_name[0].capitalize())]
+    embeds = get_embeds_by_max_fields_size(spell_name.capitalize(), spells_filtered)
+    return embeds
 
 
 # get all the spell details splitted in embeds
@@ -50,32 +54,31 @@ def get_spell_embed(spell):
 
 # !incantesimi command
 async def send_spells_list_embed(ctx, dnd_class_lower: str, level: int, spells):
-    classes = ['barbaro', 'bardo', 'chierico', 'druido', 'guerriero', 'ladro', 'mago', 'monaco', 'paladino',
-               'stregone', 'ranger', 'warlock']
-    if (dnd_class_lower in classes and level < 10):
-        # await ctx.send("``` "+classe+" "+str(livello)+" ```")
-        level = str(level)
-        # embed limit is up to 25 fields, so i need a flag to create a new embed after 25 spells found
-        flag = 0
-        i = 0
-        embed = discord.Embed(title=dnd_class_lower.capitalize(), color=SPELL_EMBED_COLOR)
-        embed2 = discord.Embed(title=dnd_class_lower.capitalize(), color=SPELL_EMBED_COLOR)
-        for spell in spells:
-            for spell_name, spell in spell.items():
-                if (i < 25):
-                    embed.add_field(name="Livello: " + level, value=spell, inline=True)
-                    i = i + 1
-                else:
-                    flag = 1
-                    embed2.add_field(name="Livello: " + level, value=spell, inline=True)
-                    i = i + 1
-        await ctx.send(embed=embed)
-        if (flag == 1):
-            await ctx.send(embed=embed2)
-
-
+    check = check_class_level(dnd_class_lower, level)
+    title = dnd_class_lower + " Lv " + str(level)
+    if check:
+        embeds = get_embeds_by_max_fields_size(title, spells)
+        for em in embeds:
+            await ctx.send(embed=em)
     else:
-        if (level < 10):
-            await ctx.send("``` " + dnd_class_lower + " non esistente e mentre livello " + str(level) + " valido ```")
-        else:
-            await ctx.send("``` " + dnd_class_lower + " non esistente e livello " + str(level) + " non valido ```")
+        await ctx.send("```Sei sicuro? Non riesco a trovare nulla con classe e/o livello specificati```")
+
+
+def get_embeds_by_max_fields_size(title, spells):
+    embed = discord.Embed(title=title.capitalize(), color=SPELL_EMBED_COLOR)
+    embeds = []
+    for i in range(len(spells)):
+        if i % MAX_FIELDS_SIZE == MAX_FIELDS_SIZE-1:
+            embeds.append(embed)
+            embed = discord.Embed(title=title.capitalize(), color=SPELL_EMBED_COLOR)
+        embed.add_field(name="Nome: ", value=spells[i]['Nome'], inline=True)
+        # every 25 spells found, it creates a new embed and send to discord
+    embeds.append(embed)
+    return embeds
+
+
+def check_class_level(dnd_class_lower: str, level: int):
+    check = False
+    if dnd_class_lower in classes and level < 10:
+        check = True
+    return check
