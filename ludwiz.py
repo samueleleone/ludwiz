@@ -1,8 +1,8 @@
 from discord.ext import commands
-from databases.spellbook import Spellbook
+from spells.spellbook import Spellbook
 from spells import bot_spells
-import bot_weapons
-from weaponsbook import WeaponsBook
+from weapons import bot_weapons
+from weapons.weaponsbook import WeaponsBook
 from auth import *
 import helpmenu
 import utilites
