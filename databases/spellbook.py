@@ -1,12 +1,6 @@
 import pymysql
-import discord
 pymysql.install_as_MySQLdb()
 import MySQLdb
-
-
-class obj:
-    settimeout=0
-    pass
 
 
 class Spellbook:
@@ -25,7 +19,7 @@ class Spellbook:
         self.userName = new_userName
         self.userPswd = new_userPswd
         self.dbName = new_dbName
-        # Mi collego al database
+        # Database connection
         self.cn_object = MySQLdb.connect(self.url,
                                          self.userName,
                                          self.userPswd,
@@ -34,24 +28,22 @@ class Spellbook:
 
     def __del__(self):
         self.cn_object.close()
-        
 
     def get_spells_by_class_level(self, classe, lvl):
         query = ("CALL getSpellsByClassLevel('" + classe + "','" + str(lvl) + "');")
         self.cursor.execute(query)
-        contentList = []
+        content_list = []
         aux = {}
         for row in self.cursor:
             aux["Nome"] = row[0]
-            contentList.append(aux)
+            content_list.append(aux)
             aux = {}
-        return contentList
-
+        return content_list
 
     def get_spells_by_name(self, nome):
         query = ("CALL getSpellsByName('" + nome + "');")
         self.cursor.execute(query)
-        contentList = []
+        content_list = []
         aux = {}
         for row in self.cursor:
             aux["Nome"] = row[0]
@@ -61,24 +53,6 @@ class Spellbook:
             aux["Durata"] = row[5]
             aux["Gittata"] = row[6]
             aux["Descrizione"] = row[7]
-            contentList.append(aux)
+            content_list.append(aux)
             aux = {}
-        return contentList
-
-    def countSpells(self, dnd_class,level):
-        query = ("CALL getSpellsByClassLevel('" + dnd_class + "','" + str(level) + "');")
-        self.cursor.execute(query)
-        i=0
-        for row in self.cursor:
-           i=i+1
-        return i
-
-    def stampaRisultato(self, content):
-        for tupla in content:
-            for nomeColonna, valore in tupla.items():
-                print(nomeColonna + " : " + str(valore))
-
-
-
-
-
+        return content_list
