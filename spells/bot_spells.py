@@ -9,7 +9,7 @@ classes = ['barbaro', 'bardo', 'chierico', 'druido', 'guerriero', 'ladro', 'mago
 async def send_spell_details(ctx, spells, spell_name):
     embeds = []
     if len(spells) == 0:
-        await ctx.send("Sei sicuro? Non riesco a trovare nessun incantesimo specificato")
+        await ctx.send("```Sei sicuro? Non riesco a trovare nessun incantesimo specificato```")
     elif len(spells) == 1:
         embeds.append(get_spell_embed(spells[0]))
     else:
@@ -31,8 +31,8 @@ async def send_spell_details(ctx, spells, spell_name):
 def get_names_embed(spells, spell_name):
     description = "'" + str(spell_name) + \
                         "' ha dato molti risultati, specifica meglio tra i seguenti: "
-    spells_filtered = [spell for spell in spells if spell["Nome"].startswith(spell_name[0].capitalize())]
-    embeds = get_embeds_by_max_fields_size(spell_name.capitalize(), spells_filtered)
+    spells_filtered = [spells[i] for i in range(0,min([len(spells),MAX_FIELDS_SIZE-1]))]
+    embeds = get_embeds_by_max_fields_size(spell_name.capitalize(), spells_filtered,description)
     return embeds
 
 
@@ -46,11 +46,11 @@ def get_spell_embed(spell):
     # Embed composition
     details = discord.Embed(title=name, color=SPELL_EMBED_COLOR)
 
-    details.add_field(name='Tipo', value=spell['Tipo'], inline=True)
+    details.add_field(name='Tipo',value=spell['Tipo'], inline=True)
     details.add_field(name='Tempo di Lancio', value=spell['TempoDiLancio'], inline=True)
     details.add_field(name='Durata', value=spell['Durata'], inline=True)
     details.add_field(name='Gittata', value=spell['Gittata'], inline=True)
-    details.add_field(name='Componenti', value=spell['Componenti'], inline=True)
+    details.add_field(name='Componenti', value=spell['Componenti'], inline=False)
     details.add_field(name='Descrizione', value=splits[0], inline=False)
 
     # If required add fields for remained description
@@ -64,17 +64,18 @@ def get_spell_embed(spell):
 # !incantesimi command
 async def send_spells_list_embed(ctx, dnd_class_lower: str, level: int, spells):
     check = check_class_level(dnd_class_lower, level)
-    title = dnd_class_lower + " Lv " + str(level)
+    title = dnd_class_lower.capitalize() + " livello " + str(level)
     if check:
-        embeds = get_embeds_by_max_fields_size(title, spells)
+        embeds = get_embeds_by_max_fields_size(title, spells,"")
         for em in embeds:
             await ctx.send(embed=em)
     else:
         await ctx.send("```Sei sicuro? Non riesco a trovare nulla con classe e/o livello specificati```")
 
 
-def get_embeds_by_max_fields_size(title, spells):
+def get_embeds_by_max_fields_size(title, spells,description):
     embed = discord.Embed(title=title.capitalize(), color=SPELL_EMBED_COLOR)
+    embed.description = description
     embeds = []
     for i in range(len(spells)):
         if i % MAX_FIELDS_SIZE == MAX_FIELDS_SIZE-1:
