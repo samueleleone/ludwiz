@@ -18,11 +18,6 @@ import MySQLdb
 
 ```
 
-### Add LudwizBot to your Discord server
-
-Click to add:
-[Here](https://discordapp.com/api/oauth2/authorize?client_id=704422717981589624&permissions=67584&scope=bot)
-
 ### How to use
 
 Rolling dice commands:
