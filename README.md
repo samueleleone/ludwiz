@@ -81,7 +81,7 @@ Other commands:
 
 - More elegant and structured code in some commands
 - Code Optimization
-- Adding other functionalities
+- Adding other features
 
 
 
